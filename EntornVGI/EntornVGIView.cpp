@@ -266,7 +266,6 @@ BOOL CEntornVGIView::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
-
 /////////////////////////////////////////////////////////////////////////////
 // Impresión de CEntornVGIView
 
@@ -539,7 +538,6 @@ void CEntornVGIView::GetGLVersion(int* major, int* minor)
 	ver = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);	// 1.50 NVIDIA via Cg compiler
 }
 
-
 void CEntornVGIView::OnDestroy()
 {
 	CView::OnDestroy();
@@ -548,7 +546,6 @@ void CEntornVGIView::OnDestroy()
 	CDC* pDC = GetDC();
 	ReleaseDC(pDC);
 }
-
 
 void CEntornVGIView::OnSize(UINT nType, int cx, int cy)
 {
@@ -565,7 +562,6 @@ void CEntornVGIView::OnSize(UINT nType, int cx, int cy)
 
 }
 
-
 void CEntornVGIView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
@@ -574,7 +570,6 @@ void CEntornVGIView::OnInitialUpdate()
 	//m_glRenderer.PrepareScene(pDC);
 	ReleaseDC(pDC);
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Dibujo de CEntornVGIView
@@ -589,7 +584,6 @@ void CEntornVGIView::OnDraw(CDC* /*pDC*/)
 	if (!pDoc)
 		return;
 }
-
 
 void CEntornVGIView::OnPaint()
 {
@@ -646,56 +640,66 @@ void CEntornVGIView::OnPaint()
 			FonsN();
 
 // Here we call the ProjeccioOrto and Ortografica calls to obtain the four orthographic views (top, front, isometric)
-// ----------GMS Environment: YOU MUST COMPLETE WHEN YOU IMPLEMENT ORTHOGRAPHIC VIEW
+// ---------GMS Environment: YOU MUST COMPLETE WHEN YOU IMPLEMENT ORTHOGRAPHIC VIEW
 // PLANTA (Upper Left)
 
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto(0, 0, w/2, h/2, OPV.R);
-		Vista_Ortografica(0, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
-
+		Projeccio_Orto(0, h/2, w/2, h, OPV.R);
+		Vista_Ortografica(0, OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+			oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+			textura_map, ifixe, eixos);
+		
 // Draw the object or scene
 		glPushMatrix();
 		  configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
-		  dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
+		  //dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
 		glPopMatrix();
-
+// Swap OpenGL buffer --> Screen Buffer
+		SwapBuffers(m_pDC->GetSafeHdc());
+		
 // ALÇAT (Upper Right)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto(w/2, 0, w, h/2, OPV.R);
-		Vista_Ortografica(1, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+		Projeccio_Orto(w/2, h/2, w, h, OPV.R);
+		Vista_Ortografica(1, OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+			oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+			textura_map, ifixe, eixos);
 
 		// Draw the object or scene
 		glPushMatrix();
 		  configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
 		  dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
 		glPopMatrix();
+// Swap OpenGL buffer --> Screen Buffer
+		SwapBuffers(m_pDC->GetSafeHdc());
 
 // PROFILE (Lower Left)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto(0, h / 2, w / 2, h, OPV.R);
-		Vista_Ortografica(2, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+		Projeccio_Orto(0, 0, w/2, h/2, OPV.R);
+		Vista_Ortografica(2, OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+			oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
+			textura_map, ifixe, eixos);
 
 // Draw the object or scene
 		glPushMatrix();
 		  configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
 		  dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
 		glPopMatrix();
+// Swap OpenGL buffer --> Screen Buffer
+		SwapBuffers(m_pDC->GetSafeHdc());
 
-// ISOMETRIC (Lower Right)
+		// ISOMETRIC (Lower Right)
 // Definition of Viewport, Projection and Camera
-		Projeccio_Orto(w/2, h/2, w, h, OPV.R);
-		Vista_Ortografica(3, OPV.R, c_fons, col_obj, objecte, mida, pas, oculta,
-			test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
+		Projeccio_Orto(w/2, 0, w, h/2, OPV.R);
+		Vista_Ortografica(3, OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
+			oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, 
+			textura_map, ifixe, eixos);
 
 // Draw the object or scene
 		glPushMatrix();
 		  configura_Escena();   // To apply Geometrical Transforms according Transform pop up and to configure scene objects
 		  dibuixa_Escena();		// Draw scene geometry using OpenGL commands.
 		glPopMatrix();
-
+		
 // Swap OpenGL buffer --> Screen Buffer
 		SwapBuffers(m_pDC->GetSafeHdc());
 		break;
@@ -708,14 +712,11 @@ void CEntornVGIView::OnPaint()
 
 // Definition of Viewport, Projection and Camera
 		Projeccio_Perspectiva(0, 0, w, h, OPV.R);
-		if (navega)	{	Vista_Navega(opvN, false, n, vpv, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, true, pas,
-							oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura, textura_map, ifixe, eixos);
-					}
-		else {	n[0] = 0;		n[1] = 0;		n[2] = 0;
+		
 				Vista_Esferica(OPV, Vis_Polar, pan, tr_cpv, tr_cpvF, c_fons, col_obj, objecte, mida, pas,
 					oculta, test_vis, back_line, ilumina, llum_ambient, llumGL, textura,
 					textura_map, ifixe, eixos);
-			}
+			
 
 // Draw the object or scene
 		glPushMatrix();
@@ -755,7 +756,6 @@ void CEntornVGIView::OnPaint()
 //  Update the Status Bar of application with the values R,A,B,PVx,PVy,PVz and others.
 	Barra_Estat();
 }
-
 
 // configura_Escena: This function calls instancia function that defines the Geometrical Transforms defined in pop up Transforma.
 void CEntornVGIView::configura_Escena() {
@@ -1081,7 +1081,6 @@ GLuint CEntornVGIView::initializeShaders(CString filename)
 	else return 0;	// To return 0 if file not found
 }
 
-
 char *CEntornVGIView::textFileRead(char *fn) {
 	FILE *fp;
 	char *content = NULL;
@@ -1158,14 +1157,12 @@ void CEntornVGIView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-
 void CEntornVGIView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 // TODO: Add your message handler code here and/or call default
 
 	CView::OnKeyUp(nChar, nRepCnt, nFlags);
 }
-
 
 // Teclat_ColorObjecte: keys to change the object color by means of keyboard.
 void CEntornVGIView::Teclat_ColorObjecte(UINT nChar, UINT nRepCnt)
@@ -1235,7 +1232,6 @@ void CEntornVGIView::Teclat_ColorObjecte(UINT nChar, UINT nRepCnt)
 					else if ((nChar == 'f') || (nChar == 'F')) sw_color = false;
 
 }
-
 
 // Teclat_ColorFons: Keys to change background color.
 void CEntornVGIView::Teclat_ColorFons(UINT nChar, UINT nRepCnt)
@@ -1386,7 +1382,6 @@ void CEntornVGIView::Teclat_Navega(UINT nChar, UINT nRepCnt)
 		break;
 	}
 }
-
 
 // Teclat_Pan: Teclat pels moviments de Pan.
 void CEntornVGIView::Teclat_Pan(UINT nChar, UINT nRepCnt)
@@ -1665,7 +1660,6 @@ void CEntornVGIView::Teclat_TransRota(UINT nChar, UINT nRepCnt)
 	}
 }
 
-
 // Teclat_TransTraslada: Keys to change the translation values for X,Y,Z.
 void CEntornVGIView::Teclat_TransTraslada(UINT nChar, UINT nRepCnt)
 {
@@ -1803,7 +1797,6 @@ void CEntornVGIView::OnLButtonDown(UINT nFlags, CPoint point)
 	CView::OnLButtonDown(nFlags, point);
 }
 
-
 // OnLButtonUp: Callback function called when the mouse left button is up pressed.
 void CEntornVGIView::OnLButtonUp(UINT nFlags, CPoint point)
 {
@@ -1827,7 +1820,6 @@ void CEntornVGIView::OnLButtonUp(UINT nFlags, CPoint point)
 	CView::OnLButtonUp(nFlags, point);
 }
 
-
 // OnRButtonUp: Callback function called when the mouse right button is up pressed.
 void CEntornVGIView::OnRButtonDown(UINT nFlags, CPoint point)
 {
@@ -1840,7 +1832,6 @@ void CEntornVGIView::OnRButtonDown(UINT nFlags, CPoint point)
 	CView::OnRButtonDown(nFlags, point);
 }
 
-
 // OnLButtonDown: Funció que es crida quan deixem d'apretar el botó dret del mouse.
 void CEntornVGIView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 {
@@ -1850,7 +1841,6 @@ void CEntornVGIView::OnRButtonUp(UINT /* nFlags */, CPoint point)
 	ClientToScreen(&point);
 	OnContextMenu(this, point);
 }
-
 
 // OnMouseMove: Callback function called when the mouse is moved. We use the function to 
 //				  the Interactive Visualization with mouse keys pressed to modify 
@@ -2265,7 +2255,6 @@ void CEntornVGIView::OnVistaMobil()
 	InvalidateRect(NULL, false);
 }
 
-
 void CEntornVGIView::OnUpdateVistaMobil(CCmdUI *pCmdUI)
 {
 // TODO: Agregue aquí su código de controlador de IU para actualización de comandos
@@ -2293,7 +2282,6 @@ void CEntornVGIView::OnUpdateVistaZoom(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
-
 // VISTA: Satèlit. Interactive View and animated adding the movement defined by mouse (boolean option)
 void CEntornVGIView::OnVistaSatelit()
 {
@@ -2307,14 +2295,12 @@ void CEntornVGIView::OnVistaSatelit()
 	InvalidateRect(NULL, false);
 }
 
-
 void CEntornVGIView::OnUpdateVistaSatelit(CCmdUI *pCmdUI)
 {
 // TODO: Agregue aquí su código de controlador de IU para actualización de comandos
 	if (satelit) pCmdUI->SetCheck(1);
 		else pCmdUI->SetCheck(0);
 }
-
 
 // VIEW: Shperical Coord. with X Axis Up.
 void CEntornVGIView::OnVistaPolarsX()
@@ -2333,7 +2319,6 @@ void CEntornVGIView::OnUpdateVistaPolarsX(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
-
 // VIEW: Shperical Coord. with Y Axis Up.
 void CEntornVGIView::OnVistaPolarsY()
 {
@@ -2351,7 +2336,6 @@ void CEntornVGIView::OnUpdateVistaPolarsY(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
-
 // VIEW: Shperical Coord. with Z Axis Up.
 void CEntornVGIView::OnVistaPolarsZ()
 {
@@ -2368,7 +2352,6 @@ void CEntornVGIView::OnUpdateVistaPolarsZ(CCmdUI *pCmdUI)
 	if (Vis_Polar == POLARZ) pCmdUI->SetCheck(1);
 		else pCmdUI->SetCheck(0);
 }
-
 
 // VISTA: Enable / Disable pan (horizontal and vertical displacement of screen) (boolean option)
 void CEntornVGIView::OnVistaPan()
@@ -2455,7 +2438,6 @@ void CEntornVGIView::OnVistaEixos()
 	InvalidateRect(NULL, false);
 }
 
-
 void CEntornVGIView::OnUpdateVistaEixos(CCmdUI *pCmdUI)
 {
 // TODO: Agregue aquí su código de controlador de IU para actualización de comandos
@@ -2474,7 +2456,8 @@ void CEntornVGIView::OnProjeccioPerspectiva()
 {
 // TODO: Add your command controller here
 	projeccio = PERSPECT;
-	mobil = true;			zzoom = true;
+	mobil = true;
+	zzoom = true;
 
 // Return to main loop OnPaint() to redraw the scene
 	InvalidateRect(NULL, false);
@@ -2484,8 +2467,26 @@ void CEntornVGIView::OnProjeccioPerspectiva()
 void CEntornVGIView::OnUpdateProjeccioPerspectiva(CCmdUI *pCmdUI)
 {
 // TODO: Agregue aquí su código de controlador de IU para actualización de comandos
-	if (projeccio == PERSPECT) pCmdUI->SetCheck(1);
-		else pCmdUI->SetCheck(0);
+	if (projeccio == PERSPECT) 
+		pCmdUI->SetCheck(1);
+	else 
+		pCmdUI->SetCheck(0);
+}
+
+void CEntornVGIView::OnProjectionOrthogonal()
+{
+	projeccio = ORTO;
+	zzoom = true;
+	// Call to OnPaint() to redraw the scene
+	InvalidateRect(NULL, false);
+}
+
+void CEntornVGIView::OnUpdateProjectionOrthogonal(CCmdUI *pCmdUI)
+{
+	if (projeccio == ORTO)
+		pCmdUI->SetCheck(1);
+	else
+		pCmdUI->SetCheck(0);
 }
 
 
@@ -2513,7 +2514,6 @@ void CEntornVGIView::OnUpdateObjecteCub(CCmdUI *pCmdUI)
 	if (objecte == CUBE) pCmdUI->SetCheck(1);
 		else pCmdUI->SetCheck(0);
 }
-
 
 // OBJECT Sphere
 void CEntornVGIView::OnObjecteEsfera()
@@ -2556,7 +2556,6 @@ void CEntornVGIView::OnUpdateObjecteTetera(CCmdUI *pCmdUI)
 	if (objecte == TEAPOT) pCmdUI->SetCheck(1);
 		else pCmdUI->SetCheck(0);
 }
-
 
 // OBJECT Truck
 void CEntornVGIView::OnObjecteTruck()
@@ -2605,14 +2604,12 @@ void CEntornVGIView::OnTransformaTraslacio()
 	InvalidateRect(NULL, false);
 }
 
-
 void CEntornVGIView::OnUpdateTransformaTraslacio(CCmdUI *pCmdUI)
 {
 // TODO: Agregue aquí su código de controlador de IU para actualización de comandos
 	if (trasl) pCmdUI->SetCheck(1);
 		else pCmdUI->SetCheck(0);
 }
-
 
 // TRANSFORM: To define the TRASLATION Origin
 void CEntornVGIView::OnTransformaOrigentraslacio()
@@ -2626,7 +2623,6 @@ void CEntornVGIView::OnTransformaOrigentraslacio()
 // Return to main loop OnPaint() to redraw the scene
 	InvalidateRect(NULL, false);
 }
-
 
 // TRANSFORM: ROTATION
 void CEntornVGIView::OnTransformaRotacio()
@@ -2648,7 +2644,6 @@ void CEntornVGIView::OnUpdateTransformaRotacio(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
-
 // TRANSFORM: To define the ROTATION Origin
 void CEntornVGIView::OnTransformaOrigenrotacio()
 {
@@ -2661,7 +2656,6 @@ void CEntornVGIView::OnTransformaOrigenrotacio()
 // Return to main loop OnPaint() to redraw the scene
 	InvalidateRect(NULL, false);
 }
-
 
 // TRANSFORM: SCALE
 void CEntornVGIView::OnTransformaEscalat()
@@ -2681,7 +2675,6 @@ void CEntornVGIView::OnUpdateTransformaEscalat(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
-
 // TRANSFORM: To define the SCALE Origin
 void CEntornVGIView::OnTransformaOrigenescalat()
 {
@@ -2691,7 +2684,6 @@ void CEntornVGIView::OnTransformaOrigenescalat()
 // Return to main loop OnPaint() to redraw the scene
 	InvalidateRect(NULL, false);
 }
-
 
 // TRANSFOM: Mobil X Axis? (boolean option).
 void CEntornVGIView::OnTransformaMobilx()
@@ -2718,7 +2710,6 @@ void CEntornVGIView::OnUpdateTransformaMobilx(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
-
 // TRANSFOM: Mobil Y Axis? (boolean option).
 void CEntornVGIView::OnTransformaMobily()
 {
@@ -2743,7 +2734,6 @@ void CEntornVGIView::OnUpdateTransformaMobily(CCmdUI *pCmdUI)
 	if (transY) pCmdUI->SetCheck(1);
 		else pCmdUI->SetCheck(0);
 }
-
 
 // TRANSFOM: Mobil Z Axis? (boolean option).
 void CEntornVGIView::OnTransformaMobilz()
@@ -2791,7 +2781,6 @@ void CEntornVGIView::OnUpdateOcultacionsTestvis(CCmdUI *pCmdUI)
 	if (test_vis) pCmdUI->SetCheck(1);
 		else pCmdUI->SetCheck(0);
 }
-
 
 // HIDDEN: Z-Buffer? (boolean option).
 void CEntornVGIView::OnOcultacionsZbuffer()
@@ -3355,21 +3344,3 @@ void CEntornVGIView::Refl_MaterialOn()
 }
 
 
-
-void CEntornVGIView::OnProjectionOrthogonal()
-{
-	projeccio = ORTO;
-	// Call to OnPaint() to redraw the scene
-	InvalidateRect(NULL, false);
-}
-
-
-
-
-void CEntornVGIView::OnUpdateProjectionOrthogonal(CCmdUI *pCmdUI)
-{
-	if (projeccio == ORTO)
-		pCmdUI->SetCheck(1);
-	else
-		pCmdUI->SetCheck(0);
-}

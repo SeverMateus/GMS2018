@@ -141,8 +141,10 @@ void Iluminacio(char ilumin, bool ifix, bool ll_amb, LLUM lumin, bool textur, bo
 		}
 
 		// Pregunta 9 enunciat
-		if (textur_map) glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		else glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+		if (textur_map) 
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		else 
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
 		// Generació coordenades textura automàtiques per als objectes Fractals.
 		/*	  if (obj == O_FRACTAL)
@@ -217,9 +219,9 @@ void Projeccio_Orto(int minx, int miny, GLsizei w, GLsizei h, float zoom)
 	glLoadIdentity();
 
 	// ORTHOGONAL PROJECTION
-	//glOrtho(-10.00, 10.0, 0.0, -10.0, p_near, p_far + zoom);
-	//glOrtho(-10, 15, 20, -10, p_near, p_far + zoom);
-		glOrtho(60.0, 1.0, 0,0, p_near, p_far + zoom);
+	glOrtho(-(w-minx)/2, w, -(h-miny)/2, h, p_near, p_far);
+	
+
 	// Switch on the GL_MODELVIEW matrix structure
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -227,33 +229,77 @@ void Projeccio_Orto(int minx, int miny, GLsizei w, GLsizei h, float zoom)
 
 // Vista_Ortogràfica: To define lighting conditions (calling Iluminacio function) and load parameters in GL_MODELVIEW MATRIX (Point of View). 
 //                    It calls gluLookAt function according to prj variable (top, front, isometric views).
-void Vista_Ortografica(int prj, GLfloat Raux, CColor col_fons, CColor col_object, char objecte, GLfloat mida, int step,
+void Vista_Ortografica(int prj, CEsfe3D opv, char VPol, bool pant, CPunt3D tr, CPunt3D trF,
+	CColor col_fons, CColor col_object, char objecte, GLfloat mida, int step,
 	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi,
 	bool textur, bool textur_map, bool ifix, bool eix)
 {
+	GLfloat cam[3], up[3];
 
-	// Lighting conditions with light source attached to camera (before gluLookAt)
-	if (!ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+	// To convert angles from radiants -> degrees
+	opv.alfa = opv.alfa*pi / 180;
+	opv.beta = opv.beta*pi / 180;
+
+	if (opv.R<1.0) opv.R = 1.0;
+
+	// To clear color and depth
+	Fons(col_fons);
+
+	// Camera position and up vector definition
+	if (VPol == POLARZ) {
+		cam[0] = opv.R*cos(opv.beta)*cos(opv.alfa);	//y
+		cam[1] = opv.R*sin(opv.beta)*cos(opv.alfa);	//x
+		cam[2] = opv.R*sin(opv.alfa);				//z
+		up[0] = -cos(opv.beta)*sin(opv.alfa);
+		up[1] = -sin(opv.beta)*sin(opv.alfa);
+		up[2] = cos(opv.alfa);
+	}
+	else if (VPol == POLARY) {
+		cam[0] = opv.R*sin(opv.beta)*cos(opv.alfa);	//x
+		cam[1] = opv.R*sin(opv.alfa);				//z
+		cam[2] = opv.R*cos(opv.beta)*cos(opv.alfa);	//y
+		up[0] = -sin(opv.beta)*sin(opv.alfa);
+		up[1] = cos(opv.alfa);
+		up[2] = -cos(opv.beta)*sin(opv.alfa);
+	}
+	else { //VPol == POLARX
+		cam[0] = opv.R*sin(opv.alfa);				//z
+		cam[1] = opv.R*cos(opv.beta)*cos(opv.alfa);	//y
+		cam[2] = opv.R*sin(opv.beta)*cos(opv.alfa);	//x
+		up[0] = cos(opv.alfa);
+		up[1] = -cos(opv.beta)*sin(opv.alfa);
+		up[2] = -sin(opv.beta)*sin(opv.alfa);
+	}
+
+	// Fixed lighting conditions, not attached to camera (after gluLookAt)
+	if (!ifix) 
+		Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
+
+	// Pan option: Displacement of the center of screen outside world coordinates origin (pant=true)
+	if (pant)
+	{
+		glTranslatef(tr.x, tr.y, tr.z);
+		glTranslatef(trF.x, trF.y, trF.z);	// Traslació fixada amb la INSERT dins l'opció pan
+	}
+	// Point of View (camera) definition.
+	gluLookAt(cam[0], cam[1], cam[2], 0., 0., 0., up[0], up[1], up[2]);
 
 	// Top, Front, isometric views implamentation 
-	/*
-	if (prj == 0)
-		gluLookAt(20.0, 0, 0, 0, 0, 0, -1, 0, 0);
-	else {
-		if (prj == 1)
-			gluLookAt(0.0, 20.0, 0.0, 0, 0, 0, 0, -1, 0);
-		else
-			if (prj == 2)
-				gluLookAt(0.0, 0.0, 20.0, 0, 0, 0, 0, 0, -1);
-			else
-				if (prj == 2)
-					gluLookAt(20.0, 15.0, 10.0, 0, 0, 0, 0, 0, 1);
-				else
-					gluLookAt(20.0, 15.0, 10.0, 0, 0, 0, 0, 0, 1);
-	*/
-	gluLookAt(20.0, 0, 0, 0, 0, 0, -1, 0, 0);
-	// Clear the color and depth buffers.
-	Fons(col_fons);
+	//if (prj == 0)
+	//	gluLookAt(20.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0);
+	//else 
+	//	if (prj == 1)
+	//		gluLookAt(0.0, 20.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0);
+	//	else
+	//		if (prj == 2)
+	//			gluLookAt(0.0, 0.0, 20.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0);
+	//		else
+	//			if (prj == 3)
+	//				gluLookAt(20.0, 15.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+	//			else
+	//				gluLookAt(20.0, 15.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+	//
+
 
 	// Fixed lighting conditions, not attached to camera (after gluLookAt).
 	if (ifix) Iluminacio(iluminacio, ifix, llum_amb, lumi, textur, textur_map, objecte, bck_ln, step);
@@ -278,7 +324,6 @@ void Vista_Ortografica(int prj, GLfloat Raux, CColor col_fons, CColor col_object
 // Projeccio_Perspectiva: Viewport and gluPerspective definition.
 void Projeccio_Perspectiva(int minx, int miny, GLsizei w, GLsizei h, float zoom)
 {
-
 	// Viewport definition
 	glViewport(minx, miny, w, h);
 	if (h == 0) h = 1;
@@ -303,8 +348,8 @@ void Projeccio_Perspectiva(int minx, int miny, GLsizei w, GLsizei h, float zoom)
 //					alse we define lighting conditions.
 void Vista_Esferica(CEsfe3D opv, char VPol, bool pant, CPunt3D tr, CPunt3D trF,
 	CColor col_fons, CColor col_object, char objecte, double mida, int step,
-	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi, bool textur,
-	bool textur_map, bool ifix, bool eix)
+	bool oculta, bool testv, bool bck_ln, char iluminacio, bool llum_amb, LLUM lumi, 
+	bool textur,bool textur_map, bool ifix, bool eix)
 {
 	GLfloat cam[3], up[3];
 
@@ -319,25 +364,25 @@ void Vista_Esferica(CEsfe3D opv, char VPol, bool pant, CPunt3D tr, CPunt3D trF,
 
 	// Camera position and up vector definition
 	if (VPol == POLARZ) {
-		cam[0] = opv.R*cos(opv.beta)*cos(opv.alfa);
-		cam[1] = opv.R*sin(opv.beta)*cos(opv.alfa);
-		cam[2] = opv.R*sin(opv.alfa);
+		cam[0] = opv.R*cos(opv.beta)*cos(opv.alfa);	//y
+		cam[1] = opv.R*sin(opv.beta)*cos(opv.alfa);	//x
+		cam[2] = opv.R*sin(opv.alfa);				//z
 		up[0] = -cos(opv.beta)*sin(opv.alfa);
 		up[1] = -sin(opv.beta)*sin(opv.alfa);
 		up[2] = cos(opv.alfa);
 	}
 	else if (VPol == POLARY) {
-		cam[0] = opv.R*sin(opv.beta)*cos(opv.alfa);
-		cam[1] = opv.R*sin(opv.alfa);
-		cam[2] = opv.R*cos(opv.beta)*cos(opv.alfa);
+		cam[0] = opv.R*sin(opv.beta)*cos(opv.alfa);	//x
+		cam[1] = opv.R*sin(opv.alfa);				//z
+		cam[2] = opv.R*cos(opv.beta)*cos(opv.alfa);	//y
 		up[0] = -sin(opv.beta)*sin(opv.alfa);
 		up[1] = cos(opv.alfa);
 		up[2] = -cos(opv.beta)*sin(opv.alfa);
 	}
 	else {
-		cam[0] = opv.R*sin(opv.alfa);
-		cam[1] = opv.R*cos(opv.beta)*cos(opv.alfa);
-		cam[2] = opv.R*sin(opv.beta)*cos(opv.alfa);
+		cam[0] = opv.R*sin(opv.alfa);				//z
+		cam[1] = opv.R*cos(opv.beta)*cos(opv.alfa);	//y
+		cam[2] = opv.R*sin(opv.beta)*cos(opv.alfa);	//x
 		up[0] = cos(opv.alfa);
 		up[1] = -cos(opv.beta)*sin(opv.alfa);
 		up[2] = -sin(opv.beta)*sin(opv.alfa);
@@ -394,7 +439,7 @@ void Vista_Navega(CPunt3D pv, bool pvb, GLfloat n[3], GLfloat v[3], bool pant, C
 	if (pant) glTranslatef(tr.x, tr.y, tr.z);
 	glTranslatef(trF.x, trF.y, trF.z);	// Translation fixed with INSERT key inside pan option
 
-										// Point of View (camera) definition.
+	// Point of View (camera) definition.
 	gluLookAt(pv.x, pv.y, pv.z, n[0], n[1], n[2], v[0], v[1], v[2]);
 
 	// Fixed lighting conditions, not attached to camera (after gluLookAt)

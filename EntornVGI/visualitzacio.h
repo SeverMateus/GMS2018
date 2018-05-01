@@ -16,15 +16,17 @@ void Iluminacio(char ilumin,bool ifix,bool ll_amb,LLUM lumin,bool textur,char ob
 
 // GMS Environment: orthographic Projection functions;
 void Projeccio_Orto(int minx, int miny, GLsizei w, GLsizei h, float zoom);
-void Vista_Ortografica(int prj,GLfloat Raux,CColor col_fons,CColor col_object,char objecte,GLfloat mida,int step,
+void Vista_Ortografica(int prj, CEsfe3D opv, char VPol, bool pant, CPunt3D tr, CPunt3D trF,
+				CColor col_fons,CColor col_object,char objecte,GLfloat mida,int step,
 				bool oculta,bool testv,bool bck_ln,char iluminacio,bool llum_amb,LLUM lumi,bool textur,
 				bool textur_map,bool ifix,bool eix);
 
 // GMS Environment: Perspective Projection functions
 void Projeccio_Perspectiva(int,int,GLsizei,GLsizei,float);
 void Vista_Esferica(CEsfe3D opv,char VPol,bool pant,CPunt3D tr,CPunt3D trF,
-				 CColor col_fons,CColor col_object,char objecte,double mida,int step,bool oculta,bool testv,
-				 bool bck_ln,char iluminacio,bool llum_amb,LLUM lumi,bool textur,bool textur_map,bool ifix,bool eix);
+				 CColor col_fons,CColor col_object,char objecte,double mida,int step,
+				bool oculta,bool testv,bool bck_ln,char iluminacio,bool llum_amb,LLUM lumi,bool textur,
+				bool textur_map,bool ifix,bool eix);
 
 void Vista_Navega(CPunt3D pv,bool pvb,GLfloat n[3],GLfloat v[3], bool pant,CPunt3D tr,CPunt3D trF,
 				  CColor col_fons,CColor col_object,char objecte,bool color,
