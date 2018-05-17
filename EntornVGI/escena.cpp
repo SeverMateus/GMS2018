@@ -9,6 +9,66 @@
 #include "material.h"
 #include "escena.h"
 
+//ROBOT
+	//FLOOR BASE VERTEX
+GLfloat vertA[3] = { 10.0, 10.0, 0.0 };
+GLfloat vertB[3] = { 10.0,-10.0, 0.0 };
+GLfloat vertC[3] = {-10.0, 10.0, 0.0 };
+GLfloat vertD[3] = {-10.0,-10.0, 0.0 };
+	//CEILING BASE VERTEX
+GLfloat vertE[3] = { 10.0, 10.0, 5.0 };
+GLfloat vertF[3] = { 10.0,-10.0, 5.0 };
+GLfloat vertG[3] = {-10.0, 10.0, 5.0 };
+GLfloat vertH[3] = {-10.0,-10.0, 5.0 };
+
+	//CONE
+GLdouble coneBase = 2;
+GLdouble coneHeight = 12.5;
+
+	//FINGER 1
+//Vertical Base
+GLfloat vertFVBA1[3] = { 0.25, 0.5, 0.0 };
+GLfloat vertFVBB1[3] = { 0.25,-0.5, 0.0 };
+GLfloat vertFVBC1[3] = {-0.25, 0.5, 0.0 };
+GLfloat vertFVBD1[3] = {-0.25,-0.5, 0.0 };
+//Vertical Top
+GLfloat vertFVTA1[3] = { 0.25, 0.5, 4.0 };
+GLfloat vertFVTB1[3] = { 0.25,-0.5, 4.0 };
+GLfloat vertFVTC1[3] = {-0.25, 0.5, 4.0 };
+GLfloat vertFVTD1[3] = {-0.25,-0.5, 4.0 }; 
+//Horizontal Base
+GLfloat vertFHBA1[3] = { 1.75, 0.5, 3.5 };
+GLfloat vertFHBB1[3] = { 1.75,-0.5, 3.5 };
+GLfloat vertFHBC1[3] = {-0.25, 0.5, 3.5 };
+GLfloat vertFHBD1[3] = {-0.25,-0.5, 3.5 };
+//Horizontal Top
+GLfloat vertFHTA1[3] = { 1.75, 0.5, 4.0 };
+GLfloat vertFHTB1[3] = { 1.75,-0.5, 4.0 };
+GLfloat vertFHTC1[3] = {-0.25, 0.5, 4.0 };
+GLfloat vertFHTD1[3] = {-0.25,-0.5, 4.0 };
+
+	//FINGER 2
+//Vertical Base
+GLfloat vertFVBA2[3] = { 0.25, 0.5, 0.0 };
+GLfloat vertFVBB2[3] = { 0.25,-0.5, 0.0 };
+GLfloat vertFVBC2[3] = { -0.25, 0.5, 0.0 };
+GLfloat vertFVBD2[3] = { -0.25,-0.5, 0.0 };
+//Vertical Top
+GLfloat vertFVTA2[3] = { 0.25, 0.5, 4.0 };
+GLfloat vertFVTB2[3] = { 0.25,-0.5, 4.0 };
+GLfloat vertFVTC2[3] = { -0.25, 0.5, 4.0 };
+GLfloat vertFVTD2[3] = { -0.25,-0.5, 4.0 };
+//Horizontal Base
+GLfloat vertFHBA2[3] = { 1.75, 0.5, 3.5 };
+GLfloat vertFHBB2[3] = { 1.75,-0.5, 3.5 };
+GLfloat vertFHBC2[3] = { -0.25, 0.5, 3.5 };
+GLfloat vertFHBD2[3] = { -0.25,-0.5, 3.5 };
+//Horizontal Top
+GLfloat vertFHTA2[3] = { 1.75, 0.5, 4.0 };
+GLfloat vertFHTB2[3] = { 1.75,-0.5, 4.0 };
+GLfloat vertFHTC2[3] = { -0.25, 0.5, 4.0 };
+GLfloat vertFHTD2[3] = { -0.25,-0.5, 4.0 };
+
 // TEXTURES: Vector texture names
 GLuint texturID[NUM_MAX_TEXTURES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
@@ -19,6 +79,12 @@ void dibuixa_EscenaGL(char objecte, CColor col_object, bool ref_mat, bool sw_mat
 
 	switch (objecte)
 	{
+// Truck drawing
+	case ROBOT:
+		glDisable(GL_TEXTURE_2D);
+		robot(textur, texturID);
+		break;
+		
 // Truck drawing
 	case TRUCK:
 		glDisable(GL_TEXTURE_2D);
@@ -761,7 +827,6 @@ if (textu)
 	}
 }
 
-
 // Wheel drawing
 // neumatic: Paràmetres:
 //    - textur: Flag if textures switched on or off.
@@ -848,7 +913,6 @@ void llanta(bool textur, GLuint VTextur[NUM_MAX_TEXTURES])
 
 }
 
-
 // Ondulated sea
 void sea(void)
 {
@@ -913,5 +977,223 @@ void sea(void)
 		}
 		it1++;
 	}
+
+}
+
+// OBJECTE Robot with texture images if tectxture is switched on
+// Robot: Parameters:
+//    - textu: Flag of textures switxhed on/off.
+//    - VTextu: Image texture vector.
+void robot(bool textu, GLuint VTextu[NUM_MAX_TEXTURES]) 
+{
+	//FOOT
+	glPushMatrix();
+	glTranslated(0.0, 0.0, 0.0);
+		glBegin(GL_QUADS);
+		glColor3f(0.0, 0.0, 1.0);
+		// Floor Face
+			glVertex3fv(vertA); //P1
+			glVertex3fv(vertB); //P2
+			glVertex3fv(vertD); //P3
+			glVertex3fv(vertC); //P4
+		// 1 side Face
+			glVertex3fv(vertA); //P1
+			glVertex3fv(vertB); //P2
+			glVertex3fv(vertF); //P3
+			glVertex3fv(vertE); //P4
+		// 2 side Face
+			glVertex3fv(vertA); //P1
+			glVertex3fv(vertC); //P2
+			glVertex3fv(vertG); //P3
+			glVertex3fv(vertE); //P4
+		// 3 side Face
+			glVertex3fv(vertC); //P1
+			glVertex3fv(vertD); //P2
+			glVertex3fv(vertH); //P3
+			glVertex3fv(vertG); //P4
+		// 4 side Face
+			glVertex3fv(vertB); //P1
+			glVertex3fv(vertD); //P2
+			glVertex3fv(vertH); //P3
+			glVertex3fv(vertF); //P4
+		// Ceiling Face
+			glVertex3fv(vertE); //P1
+			glVertex3fv(vertF); //P2
+			glVertex3fv(vertH); //P3
+			glVertex3fv(vertG); //P4
+		glEnd();
+	glPopMatrix();
+	
+	//LEG
+	glPushMatrix();
+		glTranslated(0.0, 0.0, 5.0);
+		glColor3f(1.0, 0.0, 1.0);
+		glutSolidCone(coneBase, coneHeight, 40, 40);
+	glPopMatrix();
+
+	//ARM
+	glPushMatrix();
+		glTranslated(0.0, 0.0, 17.5);
+		glColor3f(0.5, 0.5, 0.5);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glutSolidCylinder(0.5, 15, 40, 40);
+	glPopMatrix();
+		
+	//ELBOW
+	glPushMatrix();
+		glTranslated(0.0, 0.0, 17.5);
+		glColor3f(1.0, 0.0, 0.0);
+		glutSolidSphere(2, 40, 40);
+	glPopMatrix();
+
+	////////////////////////////////////////////////////////CLAMP - UPPER GREEN FINGER
+	glPushMatrix();
+		glColor3f(0.0, 0.5, 0.0);
+		glTranslated(0.0, -15.0, 17.5);
+		glRotatef(-90.0, 0.0, 0.0, 1.0);
+		glRotatef(45.0, 0.0, 1.0, 0.0);
+		glBegin(GL_QUADS);
+		// Vertical Floor Face
+			glVertex3fv(vertFVBA2); //P1
+			glVertex3fv(vertFVBB2); //P2
+			glVertex3fv(vertFVBD2); //P3
+			glVertex3fv(vertFVBC2); //P4
+									// Vertical 1 Side Face
+			glVertex3fv(vertFVBA2); //P1
+			glVertex3fv(vertFVBB2); //P2
+			glVertex3fv(vertFVTB2); //P3
+			glVertex3fv(vertFVTA2); //P4
+									// Vertical 2 Side Face
+			glVertex3fv(vertFVBA2); //P1
+			glVertex3fv(vertFVBC2); //P2
+			glVertex3fv(vertFVTC2); //P3
+			glVertex3fv(vertFVTA2); //P4
+									// Vertical 3 Side Face
+			glVertex3fv(vertFVBC2); //P1
+			glVertex3fv(vertFVBD2); //P2
+			glVertex3fv(vertFVTD2); //P3
+			glVertex3fv(vertFVTC2); //P4
+									// Vertical 4 Side Face
+			glVertex3fv(vertFVBB2); //P1
+			glVertex3fv(vertFVBD2); //P2
+			glVertex3fv(vertFVTD2); //P3
+			glVertex3fv(vertFVTB2); //P4
+									// Vertical Ceiling Face
+			glVertex3fv(vertFVTA2); //P1
+			glVertex3fv(vertFVTB2); //P2
+			glVertex3fv(vertFVTD2); //P3
+			glVertex3fv(vertFVTC2); //P4
+
+			// Horizontal Floor Face
+			glVertex3fv(vertFHBA2); //P1
+			glVertex3fv(vertFHBB2); //P2
+			glVertex3fv(vertFHBD2); //P3
+			glVertex3fv(vertFHBC2); //P4
+									// Horizontal 1 Side Face
+			glVertex3fv(vertFHBA2); //P1
+			glVertex3fv(vertFHBB2); //P2
+			glVertex3fv(vertFHTB2); //P3
+			glVertex3fv(vertFHTA2); //P4
+									// Horizontal 2 Side Face
+			glVertex3fv(vertFHBA2); //P1
+			glVertex3fv(vertFHBC2); //P2
+			glVertex3fv(vertFHTC2); //P3
+			glVertex3fv(vertFHTA2); //P4
+									// Horizontal 3 Side Face
+			glVertex3fv(vertFHBC2); //P1
+			glVertex3fv(vertFHBD2); //P2
+			glVertex3fv(vertFHTD2); //P3
+			glVertex3fv(vertFHTC2); //P4
+									// Horizontal 4 Side Face
+			glVertex3fv(vertFHBB2); //P1
+			glVertex3fv(vertFHBD2); //P2
+			glVertex3fv(vertFHTD2); //P3
+			glVertex3fv(vertFHTB2); //P4
+									// Horizontal Ceiling Face
+			glVertex3fv(vertFHTA2); //P1
+			glVertex3fv(vertFHTB2); //P2
+			glVertex3fv(vertFHTD2); //P3
+			glVertex3fv(vertFHTC2); //P4
+		glEnd();
+	glPopMatrix();
+
+	////////////////////////////////////////////////////////CLAMP - LOWER BLUE FINGER
+	glPushMatrix();
+		glColor3f(0.0, 0.0, 0.5);
+		glTranslated(0.0, -15.0, 17.5);
+		glRotatef(90.0, 0.0, 0.0, 1.0);
+		glRotatef(-135.0, 0.0, 1.0, 0.0);
+		glBegin(GL_QUADS);
+
+			// Vertical Floor Face
+			glVertex3fv(vertFVBA1); //P1
+			glVertex3fv(vertFVBB1); //P2
+			glVertex3fv(vertFVBD1); //P3
+			glVertex3fv(vertFVBC1); //P4
+									// Vertical 1 Side Face
+			glVertex3fv(vertFVBA1); //P1
+			glVertex3fv(vertFVBB1); //P2
+			glVertex3fv(vertFVTB1); //P3
+			glVertex3fv(vertFVTA1); //P4
+									// Vertical 2 Side Face
+			glVertex3fv(vertFVBA1); //P1
+			glVertex3fv(vertFVBC1); //P2
+			glVertex3fv(vertFVTC1); //P3
+			glVertex3fv(vertFVTA1); //P4
+									// Vertical 3 Side Face
+			glVertex3fv(vertFVBC1); //P1
+			glVertex3fv(vertFVBD1); //P2
+			glVertex3fv(vertFVTD1); //P3
+			glVertex3fv(vertFVTC1); //P4
+									// Vertical 4 Side Face
+			glVertex3fv(vertFVBB1); //P1
+			glVertex3fv(vertFVBD1); //P2
+			glVertex3fv(vertFVTD1); //P3
+			glVertex3fv(vertFVTB1); //P4
+									// Vertical Ceiling Face
+			glVertex3fv(vertFVTA1); //P1
+			glVertex3fv(vertFVTB1); //P2
+			glVertex3fv(vertFVTD1); //P3
+			glVertex3fv(vertFVTC1); //P4
+
+									// Horizontal Floor Face
+			glVertex3fv(vertFHBA1); //P1
+			glVertex3fv(vertFHBB1); //P2
+			glVertex3fv(vertFHBD1); //P3
+			glVertex3fv(vertFHBC1); //P4
+									// Horizontal 1 Side Face
+			glVertex3fv(vertFHBA1); //P1
+			glVertex3fv(vertFHBB1); //P2
+			glVertex3fv(vertFHTB1); //P3
+			glVertex3fv(vertFHTA1); //P4
+									// Horizontal 2 Side Face
+			glVertex3fv(vertFHBA1); //P1
+			glVertex3fv(vertFHBC1); //P2
+			glVertex3fv(vertFHTC1); //P3
+			glVertex3fv(vertFHTA1); //P4
+									// Horizontal 3 Side Face
+			glVertex3fv(vertFHBC1); //P1
+			glVertex3fv(vertFHBD1); //P2
+			glVertex3fv(vertFHTD1); //P3
+			glVertex3fv(vertFHTC1); //P4
+									// Horizontal 4 Side Face
+			glVertex3fv(vertFHBB1); //P1
+			glVertex3fv(vertFHBD1); //P2
+			glVertex3fv(vertFHTD1); //P3
+			glVertex3fv(vertFHTB1); //P4
+									// Horizontal Ceiling Face
+			glVertex3fv(vertFHTA1); //P1
+			glVertex3fv(vertFHTB1); //P2
+			glVertex3fv(vertFHTD1); //P3
+			glVertex3fv(vertFHTC1); //P4
+		glEnd();
+	glPopMatrix();
+
+	//WRIST
+	glPushMatrix();
+		glTranslated(0.0, -15.0, 17.5);
+		glColor3f(1.0, 0.0, 0.0);
+		glutSolidSphere(1, 40, 40);
+	glPopMatrix();
 
 }

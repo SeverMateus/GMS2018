@@ -145,6 +145,8 @@ BEGIN_MESSAGE_MAP(CEntornVGIView, CView)
 	ON_UPDATE_COMMAND_UI(ID_VISTA_SATELIT, &CEntornVGIView::OnUpdateVistaSatelit)
 		ON_COMMAND(ID_PROJECTION_ORTHOGONAL, &CEntornVGIView::OnProjectionOrthogonal)
 		ON_UPDATE_COMMAND_UI(ID_PROJECTION_ORTHOGONAL, &CEntornVGIView::OnUpdateProjectionOrthogonal)
+		ON_COMMAND(ID_OBJECT_ROBOT, &CEntornVGIView::OnObjectRobot)
+		ON_UPDATE_COMMAND_UI(ID_OBJECT_ROBOT, &CEntornVGIView::OnUpdateObjectRobot)
 		END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2511,8 +2513,10 @@ void CEntornVGIView::OnObjecteCub()
 void CEntornVGIView::OnUpdateObjecteCub(CCmdUI *pCmdUI)
 {
 // TODO: Agregue aquí su código de controlador de IU para actualización de comandos
-	if (objecte == CUBE) pCmdUI->SetCheck(1);
-		else pCmdUI->SetCheck(0);
+	if (objecte == CUBE) 
+		pCmdUI->SetCheck(1);
+	else 
+		pCmdUI->SetCheck(0);
 }
 
 // OBJECT Sphere
@@ -2586,6 +2590,28 @@ void CEntornVGIView::OnUpdateObjecteTruck(CCmdUI *pCmdUI)
 		else pCmdUI->SetCheck(0);
 }
 
+// OBJECT Robot
+void CEntornVGIView::OnObjectRobot()
+{
+	// TODO: Add your command handler code here
+	objecte = ROBOT;
+
+	//	---- Entorn GMS: PAY ATTENTION!!. To change the scale of the object to fit it in the Volume of Visualization (-1,1,-1,1,-1,1) (Orthographic Views)
+
+	//  ---- Entorn GMS: PAY ATTENTION!!. Modify R parameter of Point of View to fit the object in screen (Perspective, Axonometric projections)
+
+	// Return to main loop OnPaint() to redraw the scene
+	InvalidateRect(NULL, false);
+}
+
+void CEntornVGIView::OnUpdateObjectRobot(CCmdUI *pCmdUI)
+{
+	// TODO: Add your command update UI handler code here
+	if (objecte == ROBOT)
+		pCmdUI->SetCheck(1);
+	else
+		pCmdUI->SetCheck(0);
+}
 
 /* ------------------------------------------------------------------------- */
 /*					6. TRANSFORM											 */
@@ -3342,5 +3368,7 @@ void CEntornVGIView::Refl_MaterialOn()
 	sw_material[2] = sw_material_old[2];
 	sw_material[3] = sw_material_old[3];
 }
+
+
 
 
